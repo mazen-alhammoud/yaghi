@@ -1,5 +1,37 @@
 import { useEffect, useRef, useState } from "react";
 
+import step1Img1 from "../assets/Creating the Test Environment.png";
+import step1Img2 from "../assets/Exam Creation.png";
+import step1Img3 from "../assets/Exam Interface - with Attachement.png";
+import step1Img4 from "../assets/Exam Interface - with typed answer.png";
+
+import step2Img1 from "../assets/Sign In.png";
+import step2Img2 from "../assets/Exam Password.png";
+import step2Img3 from "../assets/Students Admission Ticket.png";
+import step2Img4 from "../assets/Users Log (Transparency).png";
+
+import step3Img1 from "../assets/Test Exam Readiness.png";
+import step3Img2 from "../assets/Students Attendance.png";
+import step3Img3 from "../assets/Admission_ticket.png";
+import step3Img4 from "../assets/Test Live Tracking.png";
+import step3Img5 from "../assets/Users Tracking.png";
+
+import step4Img1 from "../assets/Grading System.png";
+import step4Img2 from "../assets/Question Performance.png";
+import step4Img3 from "../assets/Report Creation per Student.png";
+import step4Img4 from "../assets/Report Generation 1.png";
+import step4Img5 from "../assets/Report Generation 3.png";
+import step4Img6 from "../assets/Report Generation 4.png";
+import step4Img7 from "../assets/Student Detailed Performance Report.png";
+
+import step5Img1 from "../assets/Performance Report with Heat Map.png";
+import step5Img2 from "../assets/Performance Review.png";
+import step5Img3 from "../assets/Report per Subject.png";
+import step5Img4 from "../assets/Skills & Performance Report.png";
+import step5Img5 from "../assets/Student Behavoir - Most Difficult Questions.png";
+import step5Img6 from "../assets/Students Detailed Report.png";
+import step5Img7 from "../assets/Students Leaderboard.png";
+
 /* ─── Step data ─── */
 
 const STEPS = [
@@ -14,6 +46,7 @@ const STEPS = [
       "Seating logic predefined",
     ],
     closing: "Nothing printed.\nNothing transported.",
+    images: [step1Img1, step1Img2, step1Img3, step1Img4],
   },
   {
     num: 2,
@@ -26,6 +59,7 @@ const STEPS = [
       "Controlled access windows",
     ],
     closing: "Chain of custody becomes digital.",
+    images: [step2Img1, step2Img2, step2Img3, step2Img4],
   },
   {
     num: 3,
@@ -39,6 +73,7 @@ const STEPS = [
     ],
     closing:
       "No pre-assigned clustering.\nNo uncontrolled movement.\nNo physical paper circulation.",
+    images: [step3Img1, step3Img2, step3Img3, step3Img4, step3Img5],
   },
   {
     num: 4,
@@ -51,6 +86,7 @@ const STEPS = [
       "Anomaly detection flags",
     ],
     closing: "Human variability minimized.",
+    images: [step4Img1, step4Img2, step4Img3, step4Img4, step4Img5, step4Img6, step4Img7],
   },
   {
     num: 5,
@@ -63,8 +99,11 @@ const STEPS = [
       "Operational stability metrics",
     ],
     closing: "Data becomes decision support.",
+    images: [step5Img1, step5Img2, step4Img2, step5Img3, step5Img4, step5Img5, step5Img6, step5Img7],
   },
 ];
+
+const IMAGE_CYCLE_MS = 3000;
 
 /* ─── Animated step card ─── */
 
@@ -77,6 +116,7 @@ function StepCard({
 }) {
   const ref = useRef<HTMLDivElement>(null);
   const [visible, setVisible] = useState(false);
+  const [imgIndex, setImgIndex] = useState(0);
 
   useEffect(() => {
     const el = ref.current;
@@ -90,6 +130,17 @@ function StepCard({
     obs.observe(el);
     return () => obs.disconnect();
   }, []);
+
+  /* Cycle images when card is visible */
+  const images = "images" in step ? (step as { images: string[] }).images : undefined;
+  useEffect(() => {
+    if (!visible || !images || images.length <= 1) return;
+    const id = setInterval(
+      () => setImgIndex((prev) => (prev + 1) % images.length),
+      IMAGE_CYCLE_MS
+    );
+    return () => clearInterval(id);
+  }, [visible, images]);
 
   /* Alternate slide direction */
   const fromLeft = index % 2 === 0;
@@ -208,36 +259,52 @@ function StepCard({
       <div
         className="rounded-2xl overflow-hidden flex items-center justify-center h-full transition-all duration-700"
         style={{
-          background: "#f9fafb",
-          border: "2px dashed rgba(36, 68, 226, 0.15)",
+          background: images ? "#fff" : "#f9fafb",
+          border: images ? "1px solid rgba(0, 0, 0, 0.06)" : "2px dashed rgba(36, 68, 226, 0.15)",
           minHeight: 240,
           boxShadow: visible
             ? "0 4px 20px rgba(0,0,0,0.04)"
             : "none",
         }}
       >
-        <div className="text-center">
-          <svg
-            className="w-10 h-10 mx-auto mb-3"
-            style={{ color: "rgba(36, 68, 226, 0.2)" }}
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="1.5"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          >
-            <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
-            <circle cx="8.5" cy="8.5" r="1.5" />
-            <polyline points="21 15 16 10 5 21" />
-          </svg>
-          <span
-            className="text-xs font-medium"
-            style={{ color: "rgba(36, 68, 226, 0.3)" }}
-          >
-            Image coming soon
-          </span>
-        </div>
+        {images ? (
+          <div className="relative w-full h-full" style={{ minHeight: 240 }}>
+            {images.map((src, i) => (
+              <img
+                key={i}
+                src={src}
+                alt={`${step.title} screenshot ${i + 1}`}
+                className="absolute inset-0 w-full h-full object-cover transition-opacity duration-700 ease-in-out"
+                style={{
+                  opacity: imgIndex === i ? 1 : 0,
+                }}
+              />
+            ))}
+          </div>
+        ) : (
+          <div className="text-center">
+            <svg
+              className="w-10 h-10 mx-auto mb-3"
+              style={{ color: "rgba(36, 68, 226, 0.2)" }}
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="1.5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
+              <circle cx="8.5" cy="8.5" r="1.5" />
+              <polyline points="21 15 16 10 5 21" />
+            </svg>
+            <span
+              className="text-xs font-medium"
+              style={{ color: "rgba(36, 68, 226, 0.3)" }}
+            >
+              Image coming soon
+            </span>
+          </div>
+        )}
       </div>
     </div>
   );
