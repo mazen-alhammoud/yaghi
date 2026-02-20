@@ -6,6 +6,7 @@ import chalhoubPhotoUrl from "../assets/Mohamad Chalhoub.jpeg";
 import danaPhotoUrl from "../assets/Dana.jpeg";
 import aminePhotoUrl from "../assets/Amine.jpeg";
 import fatimaPhotoUrl from "../assets/Fatima.jpeg";
+import nizarPhotoUrl from "../assets/Nizar.jpg";
 
 /* ─── Animated counter ─── */
 
@@ -103,7 +104,7 @@ interface Member {
 }
 
 const LEADERSHIP: Member[] = [
-  { name: "Nizar Al Awar",          role: "CEO", education: "Double Major in Management & Marketing, LAU", initials: "N" },
+  { name: "Nizar Al Awar",          role: "CEO", education: "Double Major in Management & Marketing, LAU", initials: "N", photo: nizarPhotoUrl },
   { name: "Mohamad Shayto",         role: "COO", education: "CCE & Finance, AUB",                        initials: "MS", photo: mohamadPhotoUrl },
   { name: "Saiid El Hajj Chehade",  role: "CTO", education: "PhD Cyber Security, EPFL",                  initials: "SE", photo: saiidPhotoUrl },
 ];

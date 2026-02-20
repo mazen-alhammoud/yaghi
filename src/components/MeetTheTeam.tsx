@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import nizarImg from "../assets/Nizar.jpg";
 
 /* ─── Team data ─── */
 
@@ -7,6 +8,7 @@ interface Member {
   role: string;
   education: string;
   initials: string;
+  image?: string;
 }
 
 const LEADERSHIP: Member[] = [
@@ -15,6 +17,7 @@ const LEADERSHIP: Member[] = [
     role: "CEO",
     education: "Double Major in Management & Marketing, LAU",
     initials: "N",
+    image: nizarImg,
   },
   {
     name: "Mohamad Shayto",
@@ -112,12 +115,13 @@ function MemberCard({
         transitionDelay: `${index * 0.08}s`,
       }}
     >
-      {/* Avatar placeholder */}
+      {/* Avatar */}
       <div
-        className={`${avatarSize} rounded-full flex items-center justify-center mb-4 transition-all duration-700`}
+        className={`${avatarSize} rounded-full relative flex items-center justify-center mb-4 overflow-hidden transition-all duration-700 flex-shrink-0`}
         style={{
-          background:
-            "linear-gradient(135deg, #eef1f8 0%, #e2e7f3 100%)",
+          background: member.image
+            ? "transparent"
+            : "linear-gradient(135deg, #eef1f8 0%, #e2e7f3 100%)",
           border: "2px solid rgba(36, 68, 226, 0.08)",
           boxShadow: visible
             ? "0 4px 20px rgba(0,0,0,0.06), 0 0 0 4px rgba(36, 68, 226, 0.04)"
@@ -125,12 +129,20 @@ function MemberCard({
           transitionDelay: `${index * 0.08 + 0.1}s`,
         }}
       >
-        <span
-          className={`${initialsSize} font-bold select-none`}
-          style={{ color: "#2444E2" }}
-        >
-          {member.initials}
-        </span>
+        {member.image ? (
+          <img
+            src={member.image}
+            alt={member.name}
+            className="absolute inset-0 w-full h-full object-cover"
+          />
+        ) : (
+          <span
+            className={`${initialsSize} font-bold select-none`}
+            style={{ color: "#2444E2" }}
+          >
+            {member.initials}
+          </span>
+        )}
       </div>
 
       {/* Name */}
