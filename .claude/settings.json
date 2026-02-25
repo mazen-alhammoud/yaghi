@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(xxd \"/Users/mazenalhammoud/Desktop/MEHE copy/package.json\")",
+      "Bash(xxd \"/Users/mazenalhammoud/Desktop/MEHE copy/src/App.tsx\")"
+    ]
+  }
+}

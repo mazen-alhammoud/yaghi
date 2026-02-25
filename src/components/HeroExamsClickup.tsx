@@ -1,473 +1,332 @@
-import { useEffect, useRef, useState, useCallback } from "react";
-import attemptSvgUrl from "../assets/Attempt.svg";
-import dashboardSvgUrl from "../assets/Dashboard.svg";
-import examSvgUrl from "../assets/Exam.svg";
-import performanceSvgUrl from "../assets/Performance.svg";
-import profileSvgUrl from "../assets/Profile.svg";
-import meheLogoUrl from "../assets/mehe.png";
-import elmyLogoUrl from "../assets/elmy.png";
-import StructuralPressures from "./StructuralPressures";
-import PilotStreams from "./PilotStreams";
-import UncompromisingStandards from "./UncompromisingStandards";
-import NationalFramework from "./NationalFramework";
-import EveryStageIs from "./EveryStageIs";
-import PilotDeliverables from "./PilotDeliverables";
-import PilotOverview from "./PilotOverview";
-import ClosingCTA from "./ClosingCTA";
-import WhoWeAre from "./WhoWeAre";
+import { useEffect, useRef } from "react";
 
-/* ─── Data ─── */
+/* ─── Values orbit data ─── */
 
-const BULLETS = [
-  "Secure delivery of official examinations.",
-  "Standardized workflows across examination centers.",
-  "Reduced administrative burden for schools and the Ministry.",
+const VALUES = [
+  { label: 'Ethics', angle: 0 },
+  { label: 'Credibility', angle: 72 },
+  { label: 'Quality', angle: 144 },
+  { label: 'Dominance', angle: 216 },
+  { label: 'Performance Tracking', angle: 288 },
 ];
 
-const CAPABILITIES = [
-  { label: "Dashboard", svg: dashboardSvgUrl },
-  { label: "Exams", svg: examSvgUrl },
-  { label: "Attempt Reports", svg: attemptSvgUrl },
-  { label: "Performance", svg: performanceSvgUrl },
-  { label: "Profiles", svg: profileSvgUrl },
+const VALUES_ORBIT_RADIUS = 240;
+
+/* ─── Fusion graphic data ─── */
+
+const PARTICLES = [
+  { top: '14%', left: '20%', delay: 0, dx: '-20px', dy: '-30px', dur: 3.5, size: 3 },
+  { top: '78%', left: '75%', delay: 0.8, dx: '25px', dy: '20px', dur: 4, size: 2.5 },
+  { top: '25%', left: '82%', delay: 1.6, dx: '15px', dy: '-25px', dur: 3.2, size: 3.5 },
+  { top: '70%', left: '18%', delay: 2.4, dx: '-30px', dy: '15px', dur: 3.8, size: 2 },
+  { top: '10%', left: '55%', delay: 0.4, dx: '10px', dy: '-35px', dur: 4.2, size: 2.5 },
+  { top: '85%', left: '45%', delay: 1.2, dx: '-15px', dy: '25px', dur: 3.6, size: 3 },
+  { top: '40%', left: '12%', delay: 2.0, dx: '-25px', dy: '-10px', dur: 3.4, size: 2 },
+  { top: '55%', left: '88%', delay: 0.6, dx: '20px', dy: '15px', dur: 4.4, size: 2.5 },
 ];
 
-/* ─── Check icon (inline SVG) ─── */
+/* ─── Fusion Graphic ─── */
 
-function CheckIcon() {
+function FusionGraphic() {
   return (
-    <svg
-      className="w-5 h-5 flex-shrink-0 mt-0.5"
-      style={{ color: '#2444E2' }}
-      viewBox="0 0 20 20"
-      fill="currentColor"
-      aria-hidden="true"
-    >
-      <path
-        fillRule="evenodd"
-        d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z"
-        clipRule="evenodd"
+    <div className="relative flex items-center justify-center w-full" style={{ height: 580 }}>
+      {/* Deep ambient glow */}
+      <div
+        className="absolute left-1/2 top-1/2 rounded-full pointer-events-none"
+        style={{
+          width: 500, height: 500,
+          animation: 'hero-glow-pulse 5s ease-in-out infinite',
+          background: 'radial-gradient(circle, rgba(36,68,226,0.10) 0%, rgba(107,140,255,0.04) 40%, transparent 70%)',
+        }}
       />
-    </svg>
-  );
-}
 
-/* ─── Nav sections ─── */
-
-const NAV_SECTIONS = [
-  { id: "nav-overview", label: "Overview" },
-  { id: "nav-team", label: "Team" },
-  { id: "nav-challenge", label: "Our Understanding" },
-  { id: "nav-pilot", label: "Pilot" },
-  { id: "nav-framework", label: "Framework" },
-  { id: "nav-deliverables", label: "Deliverables" },
-];
-
-/* ─── Nav bar ─── */
-
-function NavBar() {
-  const [scrollPct, setScrollPct] = useState(0);
-  const [activeId, setActiveId] = useState(NAV_SECTIONS[0].id);
-
-  useEffect(() => {
-    const onScroll = () => {
-      const docH = document.documentElement.scrollHeight - window.innerHeight;
-      if (docH <= 0) { setScrollPct(0); return; }
-      setScrollPct(Math.min(100, Math.round((window.scrollY / docH) * 100)));
-
-      /* Scroll-spy: find the section closest to the top of the viewport */
-      const offset = 120;
-      let current = NAV_SECTIONS[0].id;
-      for (const sec of NAV_SECTIONS) {
-        const el = document.getElementById(sec.id);
-        if (el && el.getBoundingClientRect().top <= offset) {
-          current = sec.id;
-        }
-      }
-      setActiveId(current);
-    };
-    window.addEventListener("scroll", onScroll, { passive: true });
-    onScroll();
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
-
-  return (
-    <nav className="fixed top-0 inset-x-0 z-50 bg-white/80 backdrop-blur-md border-b border-gray-100">
-      <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
-        <span className="text-xl font-bold text-gray-900 tracking-tight">
-          Elmy
-        </span>
-
-        {/* ─── Section links (hidden on mobile) ─── */}
-        <div className="hidden md:flex items-center gap-1">
-          {NAV_SECTIONS.map((sec) => {
-            const isActive = activeId === sec.id;
-            return (
-              <a
-                key={sec.id}
-                href={`#${sec.id}`}
-                onClick={(e) => {
-                  e.preventDefault();
-                  document.getElementById(sec.id)?.scrollIntoView({ behavior: "smooth" });
-                }}
-                className="relative px-3 py-1.5 text-xs font-medium rounded-full transition-all duration-200"
-                style={{
-                  color: isActive ? "#2444E2" : "#6b7280",
-                  background: isActive ? "rgba(36, 68, 226, 0.08)" : "transparent",
-                }}
-              >
-                {sec.label}
-              </a>
-            );
-          })}
-        </div>
-
-        {/* ─── Right side ─── */}
-        <div className="flex items-center gap-4">
-          <span
-            className="text-[0.625rem] font-semibold tabular-nums tracking-wide transition-opacity duration-300"
-            style={{ color: '#2444E2', opacity: scrollPct > 0 ? 1 : 0 }}
-          >
-            {scrollPct}%
-          </span>
-          <a
-            href="#login"
-            className="text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors"
-          >
-            Login
-          </a>
-          <a
-            href="#signup"
-            className="px-4 py-2 text-sm font-medium text-white bg-gray-900 rounded-lg hover:bg-gray-800 transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-900"
-          >
-            Sign Up
-          </a>
-        </div>
-      </div>
-
-      {/* ─── Progress bar ─── */}
-      <div className="absolute bottom-0 left-0 right-0 h-[2px] bg-gray-100/60">
+      {/* Expanding rings */}
+      {[0, 1, 2].map((i) => (
         <div
-          className="h-full transition-[width] duration-150 ease-out"
+          key={i}
+          className="absolute left-1/2 top-1/2 rounded-full pointer-events-none"
           style={{
-            width: `${scrollPct}%`,
-            background: 'linear-gradient(90deg, #2444E2, #6b8cff)',
-            boxShadow: scrollPct > 0 ? '0 0 8px rgba(36, 68, 226, 0.4)' : 'none',
+            width: 200, height: 200,
+            border: '1px solid rgba(36,68,226,0.08)',
+            animation: `hero-ring-expand 4s ease-out ${i * 1.3}s infinite`,
           }}
         />
+      ))}
+
+      {/* Static orbit rings */}
+      <svg
+        className="absolute left-1/2 top-1/2 pointer-events-none"
+        style={{ width: 450, height: 450, transform: 'translate(-50%, -50%)' }}
+        viewBox="0 0 450 450"
+      >
+        <circle cx="225" cy="225" r="200" fill="none" stroke="rgba(36,68,226,0.06)" strokeWidth="1" />
+        <circle cx="225" cy="225" r="155" fill="none" stroke="rgba(36,68,226,0.04)" strokeWidth="1" strokeDasharray="4 6" />
+      </svg>
+
+      {/* Slow-spinning dotted orbit */}
+      <svg
+        className="absolute left-1/2 top-1/2 pointer-events-none"
+        style={{
+          width: 430, height: 430,
+          transform: 'translate(-50%, -50%)',
+          animation: 'orbit-spin 40s linear infinite',
+        }}
+        viewBox="0 0 430 430"
+      >
+        <circle cx="215" cy="215" r="190" fill="none" stroke="rgba(36,68,226,0.07)" strokeWidth="1" strokeDasharray="2 10" />
+        {/* Orbiting dot */}
+        <circle cx="215" cy="25" r="3" fill="rgba(36,68,226,0.25)" />
+      </svg>
+
+      {/* Beam connections (animated dashes) */}
+      <svg className="absolute inset-0 w-full h-full pointer-events-none" style={{ overflow: 'visible' }}>
+        <defs>
+          <linearGradient id="beamL" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stopColor="#2444E2" stopOpacity="0" />
+            <stop offset="50%" stopColor="#2444E2" stopOpacity="0.5" />
+            <stop offset="100%" stopColor="#2444E2" stopOpacity="0" />
+          </linearGradient>
+          <linearGradient id="beamR" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stopColor="#6b8cff" stopOpacity="0" />
+            <stop offset="50%" stopColor="#6b8cff" stopOpacity="0.5" />
+            <stop offset="100%" stopColor="#6b8cff" stopOpacity="0" />
+          </linearGradient>
+        </defs>
+        <line x1="18%" y1="50%" x2="43%" y2="50%" stroke="url(#beamL)" strokeWidth="1.5" strokeDasharray="8 4"
+          style={{ animation: 'hero-beam-flow 3s ease-in-out infinite' }} />
+        <line x1="57%" y1="50%" x2="82%" y2="50%" stroke="url(#beamR)" strokeWidth="1.5" strokeDasharray="8 4"
+          style={{ animation: 'hero-beam-flow 3s ease-in-out 0.5s infinite' }} />
+      </svg>
+
+      {/* Floating particles */}
+      {PARTICLES.map((p, i) => (
+        <div
+          key={i}
+          className="absolute rounded-full pointer-events-none"
+          style={{
+            top: p.top, left: p.left,
+            width: p.size, height: p.size,
+            background: i % 2 === 0
+              ? 'rgba(36,68,226,0.4)'
+              : 'rgba(107,140,255,0.5)',
+            '--dx': p.dx, '--dy': p.dy,
+            animation: `particle-drift ${p.dur}s ease-in-out ${p.delay}s infinite`,
+          } as React.CSSProperties}
+        />
+      ))}
+
+      {/* ── Left entity: Khaled Yaghi ── */}
+      <div
+        className="absolute"
+        style={{
+          left: 'calc(50% - 185px)',
+          top: '50%',
+          animation: 'hero-float-a 8s ease-in-out infinite',
+        }}
+      >
+        <div
+          className="relative overflow-hidden rounded-2xl backdrop-blur-sm"
+          style={{
+            width: 150, height: 150,
+            background: 'linear-gradient(145deg, rgba(26,51,184,0.92), rgba(36,68,226,0.88))',
+            boxShadow: '0 20px 60px rgba(36,68,226,0.25), 0 0 0 1px rgba(255,255,255,0.1) inset',
+          }}
+        >
+          {/* Glass shine */}
+          <div
+            className="absolute inset-0 pointer-events-none"
+            style={{
+              background: 'linear-gradient(135deg, rgba(255,255,255,0.15) 0%, transparent 50%, rgba(255,255,255,0.05) 100%)',
+            }}
+          />
+          <div className="relative z-10 flex flex-col items-center justify-center h-full">
+            <span className="text-white/50 text-[0.6rem] font-medium uppercase tracking-[0.2em] mb-1.5">Top Educator</span>
+            <span className="text-white font-bold text-base leading-tight">Khaled</span>
+            <span className="text-white font-bold text-base leading-tight">Yaghi</span>
+          </div>
+        </div>
       </div>
-    </nav>
+
+      {/* ── Right entity: Prep-Me ── */}
+      <div
+        className="absolute"
+        style={{
+          right: 'calc(50% - 185px)',
+          top: '50%',
+          animation: 'hero-float-b 8s ease-in-out infinite',
+        }}
+      >
+        <div
+          className="relative overflow-hidden rounded-2xl backdrop-blur-sm"
+          style={{
+            width: 150, height: 150,
+            background: 'linear-gradient(145deg, rgba(107,140,255,0.92), rgba(36,68,226,0.88))',
+            boxShadow: '0 20px 60px rgba(107,140,255,0.2), 0 0 0 1px rgba(255,255,255,0.1) inset',
+          }}
+        >
+          <div
+            className="absolute inset-0 pointer-events-none"
+            style={{
+              background: 'linear-gradient(135deg, rgba(255,255,255,0.15) 0%, transparent 50%, rgba(255,255,255,0.05) 100%)',
+            }}
+          />
+          <div className="relative z-10 flex flex-col items-center justify-center h-full">
+            <span className="text-white/50 text-[0.55rem] font-medium uppercase tracking-[0.15em] mb-1.5 text-center px-2 leading-snug">Leading Tutoring Services</span>
+            <span className="text-white font-bold text-lg leading-tight">Prep-Me</span>
+          </div>
+        </div>
+      </div>
+
+      {/* ── Center fusion node ── */}
+      <div className="relative z-10">
+        {/* Shimmer ring */}
+        <div
+          className="absolute left-1/2 top-1/2 pointer-events-none"
+          style={{
+            width: 130, height: 130,
+            animation: 'shimmer 8s linear infinite',
+            background: 'conic-gradient(from 0deg, transparent, rgba(36,68,226,0.15), transparent, rgba(107,140,255,0.12), transparent)',
+            borderRadius: '50%',
+          }}
+        />
+        {/* Core */}
+        <div
+          className="relative flex items-center justify-center rounded-full"
+          style={{
+            width: 88, height: 88,
+            background: 'linear-gradient(145deg, #1a33b8, #2444E2, #4a6bff)',
+            animation: 'center-breathe 4s ease-in-out infinite',
+          }}
+        >
+          {/* Inner glass ring */}
+          <div
+            className="absolute inset-[2px] rounded-full"
+            style={{ border: '1px solid rgba(255,255,255,0.15)' }}
+          />
+          {/* Icon */}
+          <svg width="34" height="34" viewBox="0 0 24 24" fill="none" strokeLinecap="round" strokeLinejoin="round">
+            <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" fill="rgba(255,255,255,0.9)" />
+          </svg>
+        </div>
+      </div>
+
+      {/* ── Values orbit ── */}
+      {VALUES.map((v) => {
+        const delay = -(v.angle / 360) * 30;
+        return (
+          <div
+            key={v.label}
+            className="absolute left-1/2 top-1/2 pointer-events-none"
+            style={{
+              width: 0, height: 0,
+              animation: 'orbit-spin 30s linear infinite',
+              animationDelay: `${delay}s`,
+            }}
+          >
+            <div style={{ transform: `translateY(-${VALUES_ORBIT_RADIUS}px)` }}>
+              <div
+                style={{
+                  animation: 'values-counter-spin 30s linear infinite',
+                  animationDelay: `${delay}s`,
+                }}
+              >
+                <span
+                  className="inline-flex items-center whitespace-nowrap px-3 py-1.5 rounded-full text-[0.65rem] font-semibold tracking-wide backdrop-blur-sm"
+                  style={{
+                    background: 'rgba(255,255,255,0.75)',
+                    border: '1px solid rgba(36,68,226,0.12)',
+                    color: '#2444E2',
+                    boxShadow: '0 2px 12px rgba(36,68,226,0.08)',
+                    transform: 'translate(-50%, -50%)',
+                  }}
+                >
+                  {v.label}
+                </span>
+              </div>
+            </div>
+          </div>
+        );
+      })}
+    </div>
   );
 }
 
 /* ─── Main component ─── */
 
 export default function HeroExamsClickup() {
-  const [mounted, setMounted] = useState(false);
-  const [activeCapability, setActiveCapability] = useState(0);
-  const [paused, setPaused] = useState(false);
-
-  const heroWrapperRef = useRef<HTMLDivElement>(null);
-  const heroContentRef = useRef<HTMLDivElement>(null);
   const heroSectionRef = useRef<HTMLElement>(null);
 
-  useEffect(() => setMounted(true), []);
-
-  /* ─── Scroll-triggered entrance animations ─── */
+  /* ─── Trigger entrance animations on mount ─── */
   useEffect(() => {
     const el = heroSectionRef.current;
     if (!el) return;
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          el.classList.add('in-view');
-          observer.disconnect();
-        }
-      },
-      { threshold: 0.15 }
-    );
-    observer.observe(el);
-    return () => observer.disconnect();
+    requestAnimationFrame(() => {
+      el.classList.add('in-view');
+    });
   }, []);
-
-  useEffect(() => {
-    if (paused) return;
-    const id = setInterval(() => {
-      setActiveCapability((prev) => (prev + 1) % CAPABILITIES.length);
-    }, 4000);
-    return () => clearInterval(id);
-  }, [paused]);
-
-  /* ─── Scroll-driven parallax for the hero ─── */
-  const handleScroll = useCallback(() => {
-    const wrapper = heroWrapperRef.current;
-    const content = heroContentRef.current;
-    if (!wrapper || !content) return;
-
-    const rect = wrapper.getBoundingClientRect();
-    const contentH = content.offsetHeight;
-    const spacerH = wrapper.offsetHeight - contentH;
-    const scrolled = -rect.top;
-    const parallaxStart = contentH - window.innerHeight;
-    const progress = spacerH > 0
-      ? Math.max(0, Math.min(1, (scrolled - parallaxStart) / spacerH))
-      : 0;
-
-    const scale = 1 - progress * 0.02;
-
-    content.style.transform = `scale(${scale})`;
-    content.style.opacity = '1';
-    content.style.filter = 'none';
-  }, []);
-
-  useEffect(() => {
-    window.addEventListener("scroll", handleScroll, { passive: true });
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, [handleScroll]);
 
   return (
-    <>
-      <NavBar />
-
-      {/* ═══════════════════════════════════════════
-          CARD 1 — Hero  (sticky, z-1)
-          ═══════════════════════════════════════════ */}
-      <div id="nav-overview" ref={heroWrapperRef} className="relative" style={{ zIndex: 1 }}>
-        <div className="sticky top-0 bg-white overflow-hidden">
-          <div
-            ref={heroContentRef}
-            className="will-change-transform origin-top min-h-screen"
-          >
-            <section ref={heroSectionRef} className="pt-28 pb-16 sm:pt-32 sm:pb-20 lg:pt-36 lg:pb-24 overflow-hidden">
-              <div className="max-w-7xl mx-auto px-6">
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-12 items-start">
-                  {/* ─── Left column: copy ─── */}
-                  <div>
-                    <p
-                      className="text-xs font-semibold uppercase tracking-[0.15em] mb-4 animate-fade-up"
-                      style={{ color: '#2444E2', animationDelay: '0s' }}
-                    >
-                      Part of the National Campaign of the Ministry of Education
-                    </p>
-
-                    <h1
-                      className="text-3xl sm:text-4xl lg:text-[2.75rem] font-bold tracking-tight text-gray-900 mb-5 animate-fade-up"
-                      style={{ animationDelay: '0.05s', lineHeight: '1.2' }}
-                    >
-                      A Secure & Trusted{' '}
-                      <span
-                        className="bg-clip-text text-transparent animate-gradient-text"
-                        style={{
-                          backgroundImage: 'linear-gradient(90deg, #1a33b8, #2444E2, #6b8cff, #2444E2, #1a33b8)',
-                        }}
-                      >
-                        Digital Foundation
-                      </span>{' '}
-                      for Official School Exams in Lebanon
-                    </h1>
-
-                    <p
-                      className="text-base text-gray-500 leading-[1.75] mb-7 animate-fade-up"
-                      style={{ animationDelay: '0.15s' }}
-                    >
-                      A Ministry-aligned national pilot designed to safeguard fairness, transparency, and credibility at scale.
-                    </p>
-
-                    <ul className="space-y-3 mb-8">
-                      {BULLETS.map((bullet, i) => (
-                        <li
-                          key={bullet}
-                          className="flex items-start gap-3 animate-fade-up"
-                          style={{ animationDelay: `${0.25 + i * 0.08}s` }}
-                        >
-                          <CheckIcon />
-                          <span className="text-sm text-gray-700 leading-snug">
-                            {bullet}
-                          </span>
-                        </li>
-                      ))}
-                    </ul>
-
-                    <a
-                      href="#request-access"
-                      className="inline-flex items-center justify-center px-8 py-4 text-base font-semibold text-white rounded-xl shadow-lg hover:shadow-xl hover:-translate-y-0.5 active:translate-y-0 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 animate-fade-up"
-                      style={{ backgroundColor: '#2444E2', '--tw-ring-color': '#2444E2', animationDelay: '0.5s' } as React.CSSProperties}
-                    >
-                      Request Institutional Access
-                    </a>
-
-                    <p
-                      className="mt-3 text-xs text-gray-400 tracking-wide animate-fade-in"
-                      style={{ animationDelay: '0.65s' }}
-                    >
-                      Pilot-ready. Ministry-aligned. Built for reliability.
-                    </p>
-
-                    <div
-                      className="mt-10 pt-8 border-t border-gray-100 animate-fade-in"
-                      style={{ animationDelay: '0.7s' }}
-                    >
-                      <p className="text-[0.625rem] font-semibold uppercase tracking-[0.15em] text-gray-400 mb-3">
-                        Capabilities
-                      </p>
-                      <div className="flex flex-wrap gap-2">
-                        {CAPABILITIES.map((cap, i) => (
-                          <button
-                            key={cap.label}
-                            onClick={() => {
-                              setActiveCapability(i);
-                              setPaused(true);
-                              setTimeout(() => setPaused(false), 8000);
-                            }}
-                            className={`px-3 py-1.5 text-xs font-medium rounded-full transition-all duration-200 hover:-translate-y-px cursor-pointer ${
-                              activeCapability === i
-                                ? 'text-white border border-transparent'
-                                : 'text-gray-600 bg-gray-50 border border-gray-200 hover:bg-gray-100 hover:border-gray-300'
-                            }`}
-                            style={activeCapability === i ? { backgroundColor: '#2444E2' } : undefined}
-                          >
-                            {cap.label}
-                          </button>
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* ─── Right column: product preview ─── */}
-                  <div
-                    className={`relative lg:-mr-48 lg:mt-8 transition-all duration-700 ease-out ${mounted
-                      ? 'opacity-100 translate-x-0'
-                      : 'opacity-0 translate-x-10'
-                      }`}
-                    style={{ transitionDelay: '0.3s' }}
-                  >
-                    <div
-                      className="w-full rounded-2xl overflow-hidden bg-white transition-shadow duration-300 hover:shadow-2xl animate-float"
-                      style={{
-                        border: '1px solid rgba(0, 0, 0, 0.06)',
-                        boxShadow:
-                          '0 1px 2px rgba(0,0,0,0.03), 0 4px 16px rgba(0,0,0,0.04), 0 12px 40px rgba(0,0,0,0.05)',
-                      }}
-                    >
-                      <div
-                        className="flex items-center justify-between px-5 py-4"
-                        style={{
-                          borderBottom: '1px solid rgba(0, 0, 0, 0.06)',
-                          background: '#ffffff',
-                        }}
-                      >
-                        <img src={meheLogoUrl} alt="MEHE logo" className="h-10 w-auto" />
-                        <div className="flex items-center gap-3">
-                          <span className="w-6 h-6 rounded-full bg-gray-100" />
-                        </div>
-                      </div>
-
-                      <div className="aspect-video overflow-hidden relative">
-                        {CAPABILITIES.map((cap, i) => (
-                          <img
-                            key={cap.label}
-                            src={cap.svg}
-                            alt={`Elmy platform — ${cap.label}`}
-                            className={`absolute inset-0 w-full h-full object-cover object-top transition-opacity duration-500 ${
-                              activeCapability === i ? 'opacity-100' : 'opacity-0'
-                            }`}
-                          />
-                        ))}
-                      </div>
-
-                      <div
-                        className="flex items-center justify-center gap-1.5 px-5 py-2.5"
-                        style={{
-                          borderTop: '1px solid rgba(0, 0, 0, 0.06)',
-                          background: 'rgba(250, 249, 247, 0.5)',
-                        }}
-                      >
-                        <span className="text-[0.625rem] text-gray-400 tracking-wide">
-                          Powered by
-                        </span>
-                        <img src={elmyLogoUrl} alt="Elmy logo" className="h-5 w-auto" />
-                      </div>
-                    </div>
-
-                    <div
-                      className="absolute inset-y-0 right-0 w-48 pointer-events-none"
-                      style={{
-                        background:
-                          'linear-gradient(to right, transparent 0%, rgba(255,255,255,0.3) 30%, rgba(255,255,255,0.7) 60%, white 100%)',
-                      }}
-                    />
-                  </div>
-                </div>
+    <div className="h-screen overflow-hidden hero-bg-mesh hero-grain">
+      <section ref={heroSectionRef} className="relative overflow-hidden h-full">
+        <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 h-full">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-16 items-center h-full">
+            {/* ─── Left column: copy ─── */}
+            <div className="pt-24 lg:pt-0">
+              <div
+                className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full mb-6 animate-fade-up"
+                style={{
+                  background: 'rgba(36,68,226,0.06)',
+                  border: '1px solid rgba(36,68,226,0.1)',
+                  animationDelay: '0s',
+                }}
+              >
+                <span
+                  className="w-1.5 h-1.5 rounded-full"
+                  style={{ background: '#2444E2' }}
+                />
+                <span className="text-xs font-medium" style={{ color: '#2444E2' }}>
+                </span>
               </div>
-            </section>
+
+              <h1
+                className="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-gray-900 animate-fade-up"
+                style={{ animationDelay: '0.1s', lineHeight: '1.1', letterSpacing: '-0.03em' }}
+              >
+                The{' '}
+                <span
+                  className="bg-clip-text text-transparent animate-gradient-text"
+                  style={{
+                    backgroundImage: 'linear-gradient(90deg, #1a33b8, #2444E2, #6b8cff, #2444E2, #1a33b8)',
+                  }}
+                >
+                  Yaghi &<br />Prep-Me
+                </span>{' '}
+                Synergy
+              </h1>
+
+              <p
+                className="mt-6 text-lg text-gray-400 leading-relaxed max-w-md animate-fade-up"
+                style={{ animationDelay: '0.2s' }}
+              >
+              </p>
+            </div>
+
+            {/* ─── Right column: fusion graphic ─── */}
+            <div
+              className="animate-fade-up"
+              style={{ animationDelay: '0.35s' }}
+            >
+              <FusionGraphic />
+            </div>
           </div>
         </div>
-        {/* Spacer — scroll runway for the sticky pin */}
-        <div className="h-[40vh]" aria-hidden="true" />
-      </div>
 
-      {/* ═══════════════════════════════════════════
-          CARD 2 — Who We Are + Stats + Team  (z-2)
-          ═══════════════════════════════════════════ */}
-      <div id="nav-team" className="relative" style={{ zIndex: 2 }}>
-        <WhoWeAre />
-      </div>
-
-      {/* ═══════════════════════════════════════════
-          CARD 3 — Structural Pressures  (z-3)
-          ═══════════════════════════════════════════ */}
-      <div id="nav-challenge" className="relative" style={{ zIndex: 3 }}>
-        <StructuralPressures />
-      </div>
-
-      {/* ═══════════════════════════════════════════
-          CARD 4 — Pilot Streams  (z-4)
-          ═══════════════════════════════════════════ */}
-      <div id="nav-pilot" className="relative" style={{ zIndex: 4 }}>
-        <PilotStreams />
-      </div>
-
-      {/* ═══════════════════════════════════════════
-          CARD 5 — Uncompromising Standards  (z-5)
-          ═══════════════════════════════════════════ */}
-      <div className="relative" style={{ zIndex: 5 }}>
-        <UncompromisingStandards />
-      </div>
-
-      {/* ═══════════════════════════════════════════
-          CARD 6 — National Framework  (z-6)
-          ═══════════════════════════════════════════ */}
-      <div id="nav-framework" className="relative" style={{ zIndex: 6 }}>
-        <NationalFramework />
-      </div>
-
-      {/* ═══════════════════════════════════════════
-          CARD 7 — Every Stage Is  (z-7)
-          ═══════════════════════════════════════════ */}
-      <div className="relative" style={{ zIndex: 7 }}>
-        <EveryStageIs />
-      </div>
-
-      {/* ═══════════════════════════════════════════
-          CARD 8 — Pilot Overview  (z-8)
-          ═══════════════════════════════════════════ */}
-      <div className="relative" style={{ zIndex: 8 }}>
-        <PilotOverview />
-      </div>
-
-      {/* ═══════════════════════════════════════════
-          CARD 9 — Pilot Deliverables  (z-9)
-          ═══════════════════════════════════════════ */}
-      <div id="nav-deliverables" className="relative" style={{ zIndex: 9 }}>
-        <PilotDeliverables />
-      </div>
-
-      {/* ═══════════════════════════════════════════
-          CARD 10 — Closing CTA  (z-10)
-          ═══════════════════════════════════════════ */}
-      <div className="relative" style={{ zIndex: 10 }}>
-        <ClosingCTA />
-      </div>
-    </>
+        {/* Bottom fade */}
+        <div
+          className="absolute bottom-0 left-0 right-0 h-32 pointer-events-none"
+          style={{ background: 'linear-gradient(to top, white, transparent)' }}
+        />
+      </section>
+    </div>
   );
 }
