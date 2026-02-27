@@ -1,10 +1,12 @@
 import { useState, useEffect, useCallback } from "react";
 import HeroExamsClickup from "./components/HeroExamsClickup";
 import KhaledYaghi from "./components/KhaledYaghi";
+import RibalAlameh from "./components/RibalAlameh";
 import StudentGrowth from "./components/StudentGrowth";
 import HouseOfPrep from "./components/HouseOfPrep";
 import OurNumbers from "./components/OurNumbers";
 import WhatWeOffer from "./components/WhatWeOffer";
+import OurTutors from "./components/OurTutors";
 import TogetherSlide from "./components/TogetherSlide";
 import StudyPlan from "./components/StudyPlan";
 import IntegrationVision from "./components/IntegrationVision";
@@ -13,10 +15,12 @@ const SLIDES = [
   HeroExamsClickup,
   StudyPlan,
   KhaledYaghi,
+  RibalAlameh,
   StudentGrowth,
   HouseOfPrep,
   OurNumbers,
   WhatWeOffer,
+  OurTutors,
   TogetherSlide,
   IntegrationVision,
   // Add more slides here:
